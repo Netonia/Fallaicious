@@ -1,0 +1,71 @@
+Tu es un expert en analyse du discours, en rhétorique et en biais cognitifs.
+
+Analyse le {{ input_type }} suivant et identifie tous les procédés fallacieux utilisés.
+
+{% if has_context %}
+## Contexte
+{% if subject != "" %}- **Sujet** : {{ subject }}
+{% endif %}{% if location != "" %}- **Lieu** : {{ location }}
+{% endif %}{% if date != "" %}- **Date** : {{ date }}
+{% endif %}{% if person_a != "" %}- **Personne A** : {{ person_a }}
+{% endif %}{% if person_b != "" %}- **Personne B** : {{ person_b }}
+{% endif %}{% if relationship != "" %}- **Relation entre A et B** : {{ relationship }}
+{% endif %}{% if other_info != "" %}- **Autres informations** : {{ other_info }}
+{% endif %}
+{% endif %}
+
+## Texte à analyser
+
+{{ text }}
+
+---
+
+## Définition d'un discours fallacieux
+
+Un discours fallacieux est un raisonnement qui semble logique en apparence mais qui repose sur des erreurs de logique, des manipulations rhétoriques ou des biais cognitifs. Il vise à convaincre sans preuves valides.
+
+## Procédés rhétoriques à détecter
+
+- **Appel à la peur** : utiliser la peur pour convaincre
+- **Faux dilemme** : présenter uniquement deux options alors qu'il en existe d'autres
+- **Pente glissante** : affirmer qu'une action mènera inévitablement à des conséquences extrêmes
+- **Appel à l'autorité** : invoquer une autorité non pertinente
+- **Appel à la popularité** : affirmer que quelque chose est vrai parce que beaucoup y croient
+- **Homme de paille** : déformer l'argument de l'adversaire pour le réfuter plus facilement
+- **Tu quoque** : détourner la critique en accusant l'autre du même défaut
+- **Appel à la nature** : affirmer que ce qui est naturel est bon
+- **Appel à la tradition** : justifier par l'ancienneté d'une pratique
+- **Fausse cause** : attribuer une cause incorrecte à un effet
+- **Généralisation hâtive** : tirer une conclusion générale à partir d'un échantillon insuffisant
+- **Appel à l'émotion** : manipuler les émotions pour éviter l'argumentation rationnelle
+
+## Biais cognitifs à identifier
+
+- Biais de confirmation
+- Biais d'ancrage
+- Effet de halo
+- Biais de disponibilité
+- Biais du survivant
+- Effet Dunning-Kruger
+- Biais de statu quo
+- Biais d'autorité
+- Biais de groupe
+- Biais rétrospectif
+
+## Points spécifiques à analyser
+
+1. **Attaques personnelles** (ad hominem) : L'auteur attaque-t-il la personne plutôt que ses arguments ?
+2. **Détournement du sujet** (red herring) : Y a-t-il un changement de sujet pour éviter de répondre ?
+3. **Négation de faits établis** : L'auteur nie-t-il des faits scientifiquement ou historiquement établis ?
+4. **Volonté de domination argumentative** : L'auteur cherche-t-il à imposer son point de vue par la force rhétorique plutôt que par la logique ?
+5. **Présentation pseudo-vertueuse** (virtue signaling) : L'auteur se présente-t-il comme moralement supérieur pour discréditer l'autre ?
+
+## Format de réponse attendu
+
+Pour chaque procédé fallacieux détecté :
+1. **Citation** : le passage exact du texte
+2. **Type de procédé** : nom du procédé ou biais identifié
+3. **Explication** : pourquoi c'est fallacieux
+4. **Gravité** : faible / modérée / élevée
+
+Termine par une **synthèse générale** du niveau de fiabilité du discours analysé.

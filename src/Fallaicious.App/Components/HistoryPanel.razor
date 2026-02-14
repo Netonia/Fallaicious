@@ -1,0 +1,58 @@
+@inject HistoryService HistoryService
+
+<div class="history-list">
+    @if (_items is null)
+    {
+        <p class="history-loading">Chargement...</p>
+    }
+    else if (_items.Count == 0)
+    {
+        <p class="history-empty">Aucune analyse sauvegardée.</p>
+    }
+    else
+    {
+        @foreach (var item in _items)
+        {
+            <div class="history-item">
+                <div class="history-item-info" @onclick="() => OnLoad.InvokeAsync(item)">
+                    <strong>@(string.IsNullOrWhiteSpace(item.Title) ? "Sans titre" : item.Title)</strong>
+                    <small>@item.CreatedAt.ToString("dd/MM/yyyy HH:mm")</small>
+                </div>
+                <BlazorBlueprint.Components.Button.Button
+                    Variant="BlazorBlueprint.Components.Button.ButtonVariant.Ghost"
+                    Size="BlazorBlueprint.Components.Button.ButtonSize.Small"
+                    OnClick="() => DeleteItem(item.Id)">
+                    🗑️
+                </BlazorBlueprint.Components.Button.Button>
+            </div>
+        }
+    }
+</div>
+
+@code {
+    private List<AnalysisRequest>? _items;
+
+    [Parameter]
+    public EventCallback<AnalysisRequest> OnLoad { get; set; }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            _items = await HistoryService.GetAllAsync();
+            StateHasChanged();
+        }
+    }
+
+    public async Task RefreshAsync()
+    {
+        _items = await HistoryService.GetAllAsync();
+        StateHasChanged();
+    }
+
+    private async Task DeleteItem(string id)
+    {
+        await HistoryService.DeleteAsync(id);
+        _items = await HistoryService.GetAllAsync();
+    }
+}

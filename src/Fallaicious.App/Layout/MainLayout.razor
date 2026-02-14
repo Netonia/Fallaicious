@@ -1,0 +1,40 @@
+﻿@inherits LayoutComponentBase
+
+<CascadingValue Value="_loadedRequest" Name="LoadedRequest">
+<CascadingValue Value="_loadedVersion" Name="LoadedVersion">
+<div class="app-layout @(_darkMode ? "dark" : "")">
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <h3>📜 Historique</h3>
+            <BlazorBlueprint.Components.Button.Button Variant="BlazorBlueprint.Components.Button.ButtonVariant.Outline"
+                Size="BlazorBlueprint.Components.Button.ButtonSize.Small"
+                OnClick="ToggleTheme">
+                @(_darkMode ? "☀️ Clair" : "🌙 Sombre")
+            </BlazorBlueprint.Components.Button.Button>
+        </div>
+        <HistoryPanel OnLoad="OnLoadRequest" />
+    </aside>
+
+    <main class="main-content">
+        @Body
+    </main>
+</div>
+</CascadingValue>
+</CascadingValue>
+
+@code {
+    private bool _darkMode;
+    private AnalysisRequest? _loadedRequest;
+    private int _loadedVersion;
+
+    private void ToggleTheme()
+    {
+        _darkMode = !_darkMode;
+    }
+
+    private void OnLoadRequest(AnalysisRequest request)
+    {
+        _loadedRequest = request;
+        _loadedVersion++;
+    }
+}
