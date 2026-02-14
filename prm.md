@@ -39,15 +39,22 @@ Retourne UNIQUEMENT un JSON valide au format :
   "fallacies": [
     {
       "type": "string",
-      "gravite": "faible|moyenne|élevée",
+      "gravite": "string",
       "extrait": "string",
       "explication": "string",
       "reformulation": "string"
     }
   ],
-  "score_fallacieux": 0
+  "score_fallacieux": "number"
 }
 ```
+
+Valeurs autorisées pour `gravite` : `faible`, `moyenne`, `élevée`.
+
+Interprétation de `score_fallacieux` :
+- Entier de `0` à `100`
+- `0` = aucun caractère fallacieux détecté
+- `100` = discours massivement fallacieux
 
 ## Types de fallacies recommandés
 - Attaque ad hominem
