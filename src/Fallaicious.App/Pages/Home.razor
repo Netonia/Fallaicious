@@ -172,10 +172,29 @@
 @code {
     private AnalysisRequest _request = new();
     private string _templateText = string.Empty;
+    private int _lastLoadedVersion;
+
+    [CascadingParameter(Name = "LoadedRequest")]
+    private AnalysisRequest? LoadedRequest { get; set; }
+
+    [CascadingParameter(Name = "LoadedVersion")]
+    private int LoadedVersion { get; set; }
 
     protected override void OnInitialized()
     {
         _templateText = TemplateService.DefaultTemplate;
+    }
+
+    protected override void OnParametersSet()
+    {
+        if (LoadedRequest is not null && LoadedVersion != _lastLoadedVersion)
+        {
+            _lastLoadedVersion = LoadedVersion;
+            _request = LoadedRequest;
+            _templateText = string.IsNullOrWhiteSpace(LoadedRequest.Template)
+                ? TemplateService.DefaultTemplate
+                : LoadedRequest.Template;
+        }
     }
 
     private void GeneratePrompt()
@@ -188,7 +207,7 @@
     {
         if (string.IsNullOrWhiteSpace(_request.Title))
         {
-            _request.Title = $"Analyse du {DateTime.Now:dd/MM/yyyy HH:mm}";
+            _request.Title = $"Analyse du {DateTime.UtcNow:dd/MM/yyyy HH:mm}";
         }
         _request.Template = _templateText;
         await HistoryService.SaveAsync(_request);
@@ -210,14 +229,5 @@
     private async Task CopyToClipboard()
     {
         await JS.InvokeVoidAsync("navigator.clipboard.writeText", _request.GeneratedPrompt);
-    }
-
-    public void LoadRequest(AnalysisRequest request)
-    {
-        _request = request;
-        _templateText = string.IsNullOrWhiteSpace(request.Template)
-            ? TemplateService.DefaultTemplate
-            : request.Template;
-        StateHasChanged();
     }
 }

@@ -1,5 +1,7 @@
 ﻿@inherits LayoutComponentBase
 
+<CascadingValue Value="_loadedRequest" Name="LoadedRequest">
+<CascadingValue Value="_loadedVersion" Name="LoadedVersion">
 <div class="app-layout @(_darkMode ? "dark" : "")">
     <aside class="sidebar">
         <div class="sidebar-header">
@@ -17,9 +19,13 @@
         @Body
     </main>
 </div>
+</CascadingValue>
+</CascadingValue>
 
 @code {
     private bool _darkMode;
+    private AnalysisRequest? _loadedRequest;
+    private int _loadedVersion;
 
     private void ToggleTheme()
     {
@@ -28,6 +34,7 @@
 
     private void OnLoadRequest(AnalysisRequest request)
     {
-        // Navigation handled by HistoryPanel
+        _loadedRequest = request;
+        _loadedVersion++;
     }
 }
