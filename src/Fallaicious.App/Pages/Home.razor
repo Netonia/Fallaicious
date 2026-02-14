@@ -1,0 +1,224 @@
+﻿@page "/"
+@inject TemplateService TemplateService
+@inject HistoryService HistoryService
+
+<PageTitle>Fallaicious – Détecteur de Discours Fallacieux</PageTitle>
+
+<div class="generator-container">
+    <h1>🔍 Fallaicious</h1>
+    <p class="subtitle">Générateur de Prompt de Détection de Discours Fallacieux</p>
+
+    @* Section 1: Input Type *@
+    <BlazorBlueprint.Components.Card.Card Class="section-card">
+        <BlazorBlueprint.Components.Card.CardHeader>
+            <BlazorBlueprint.Components.Card.CardTitle>1. Type d'entrée</BlazorBlueprint.Components.Card.CardTitle>
+        </BlazorBlueprint.Components.Card.CardHeader>
+        <BlazorBlueprint.Components.Card.CardContent>
+            <div class="radio-group">
+                <label class="radio-label">
+                    <input type="radio" name="inputType" checked="@(_request.Input.Type == InputType.Individual)"
+                        @onchange="() => _request.Input.Type = InputType.Individual" />
+                    Retranscription d'un discours individuel
+                </label>
+                <label class="radio-label">
+                    <input type="radio" name="inputType" checked="@(_request.Input.Type == InputType.Conversation)"
+                        @onchange="() => _request.Input.Type = InputType.Conversation" />
+                    Conversation entre deux personnes (A / B)
+                </label>
+            </div>
+
+            <div class="form-field">
+                <BlazorBlueprint.Components.Label.Label>Texte à analyser</BlazorBlueprint.Components.Label.Label>
+                <BlazorBlueprint.Components.Textarea.Textarea
+                    Value="@_request.Input.Text"
+                    ValueChanged="@((string v) => _request.Input.Text = v)"
+                    Placeholder="Collez ici le texte du discours ou de la conversation..."
+                    Class="textarea-large" />
+            </div>
+        </BlazorBlueprint.Components.Card.CardContent>
+    </BlazorBlueprint.Components.Card.Card>
+
+    @* Section 2: Context *@
+    <BlazorBlueprint.Components.Card.Card Class="section-card">
+        <BlazorBlueprint.Components.Card.CardHeader>
+            <BlazorBlueprint.Components.Card.CardTitle>2. Contexte (optionnel)</BlazorBlueprint.Components.Card.CardTitle>
+        </BlazorBlueprint.Components.Card.CardHeader>
+        <BlazorBlueprint.Components.Card.CardContent>
+            <div class="form-grid">
+                <div class="form-field">
+                    <BlazorBlueprint.Components.Label.Label>Résumé du sujet</BlazorBlueprint.Components.Label.Label>
+                    <BlazorBlueprint.Components.Input.Input
+                        Value="@_request.Context.Subject"
+                        ValueChanged="@((string v) => _request.Context.Subject = v)"
+                        Placeholder="De quoi parle le discours ?" />
+                </div>
+                <div class="form-field">
+                    <BlazorBlueprint.Components.Label.Label>Lieu</BlazorBlueprint.Components.Label.Label>
+                    <BlazorBlueprint.Components.Input.Input
+                        Value="@_request.Context.Location"
+                        ValueChanged="@((string v) => _request.Context.Location = v)"
+                        Placeholder="Lieu du discours" />
+                </div>
+                <div class="form-field">
+                    <BlazorBlueprint.Components.Label.Label>Date</BlazorBlueprint.Components.Label.Label>
+                    <BlazorBlueprint.Components.Input.Input
+                        Value="@_request.Context.Date"
+                        ValueChanged="@((string v) => _request.Context.Date = v)"
+                        Placeholder="Date du discours" />
+                </div>
+                <div class="form-field">
+                    <BlazorBlueprint.Components.Label.Label>Informations sur A</BlazorBlueprint.Components.Label.Label>
+                    <BlazorBlueprint.Components.Input.Input
+                        Value="@_request.Context.PersonAInfo"
+                        ValueChanged="@((string v) => _request.Context.PersonAInfo = v)"
+                        Placeholder="Qui est la personne A ?" />
+                </div>
+                <div class="form-field">
+                    <BlazorBlueprint.Components.Label.Label>Informations sur B</BlazorBlueprint.Components.Label.Label>
+                    <BlazorBlueprint.Components.Input.Input
+                        Value="@_request.Context.PersonBInfo"
+                        ValueChanged="@((string v) => _request.Context.PersonBInfo = v)"
+                        Placeholder="Qui est la personne B ?" />
+                </div>
+                <div class="form-field">
+                    <BlazorBlueprint.Components.Label.Label>Relation entre A et B</BlazorBlueprint.Components.Label.Label>
+                    <BlazorBlueprint.Components.Input.Input
+                        Value="@_request.Context.Relationship"
+                        ValueChanged="@((string v) => _request.Context.Relationship = v)"
+                        Placeholder="Quelle est leur relation ?" />
+                </div>
+                <div class="form-field full-width">
+                    <BlazorBlueprint.Components.Label.Label>Autres éléments importants</BlazorBlueprint.Components.Label.Label>
+                    <BlazorBlueprint.Components.Textarea.Textarea
+                        Value="@_request.Context.OtherInfo"
+                        ValueChanged="@((string v) => _request.Context.OtherInfo = v)"
+                        Placeholder="Tout autre contexte pertinent..." />
+                </div>
+            </div>
+        </BlazorBlueprint.Components.Card.CardContent>
+    </BlazorBlueprint.Components.Card.Card>
+
+    @* Section 3: Template *@
+    <BlazorBlueprint.Components.Card.Card Class="section-card">
+        <BlazorBlueprint.Components.Card.CardHeader>
+            <BlazorBlueprint.Components.Card.CardTitle>3. Template Liquid (éditable)</BlazorBlueprint.Components.Card.CardTitle>
+        </BlazorBlueprint.Components.Card.CardHeader>
+        <BlazorBlueprint.Components.Card.CardContent>
+            <div class="form-field">
+                <BlazorBlueprint.Components.Textarea.Textarea
+                    Value="@_templateText"
+                    ValueChanged="@((string v) => _templateText = v)"
+                    Class="textarea-template" />
+            </div>
+            <BlazorBlueprint.Components.Button.Button
+                Variant="BlazorBlueprint.Components.Button.ButtonVariant.Outline"
+                Size="BlazorBlueprint.Components.Button.ButtonSize.Small"
+                OnClick="ResetTemplate">
+                🔄 Réinitialiser le template
+            </BlazorBlueprint.Components.Button.Button>
+        </BlazorBlueprint.Components.Card.CardContent>
+    </BlazorBlueprint.Components.Card.Card>
+
+    @* Actions *@
+    <div class="actions">
+        <div class="form-field" style="flex:1;">
+            <BlazorBlueprint.Components.Label.Label>Titre de l'analyse</BlazorBlueprint.Components.Label.Label>
+            <BlazorBlueprint.Components.Input.Input
+                Value="@_request.Title"
+                ValueChanged="@((string v) => _request.Title = v)"
+                Placeholder="Nom pour sauvegarder cette analyse" />
+        </div>
+        <BlazorBlueprint.Components.Button.Button
+            Variant="BlazorBlueprint.Components.Button.ButtonVariant.Default"
+            OnClick="GeneratePrompt">
+            ✨ Générer le prompt
+        </BlazorBlueprint.Components.Button.Button>
+        <BlazorBlueprint.Components.Button.Button
+            Variant="BlazorBlueprint.Components.Button.ButtonVariant.Secondary"
+            OnClick="SaveToHistory">
+            💾 Sauvegarder
+        </BlazorBlueprint.Components.Button.Button>
+        <BlazorBlueprint.Components.Button.Button
+            Variant="BlazorBlueprint.Components.Button.ButtonVariant.Outline"
+            OnClick="NewAnalysis">
+            🆕 Nouvelle analyse
+        </BlazorBlueprint.Components.Button.Button>
+    </div>
+
+    @* Generated Prompt *@
+    @if (!string.IsNullOrWhiteSpace(_request.GeneratedPrompt))
+    {
+        <BlazorBlueprint.Components.Card.Card Class="section-card result-card">
+            <BlazorBlueprint.Components.Card.CardHeader>
+                <BlazorBlueprint.Components.Card.CardTitle>📋 Prompt généré</BlazorBlueprint.Components.Card.CardTitle>
+            </BlazorBlueprint.Components.Card.CardHeader>
+            <BlazorBlueprint.Components.Card.CardContent>
+                <div class="form-field">
+                    <BlazorBlueprint.Components.Textarea.Textarea
+                        Value="@_request.GeneratedPrompt"
+                        ValueChanged="@((string v) => _request.GeneratedPrompt = v)"
+                        Class="textarea-result"
+                        ReadOnly="true" />
+                </div>
+                <BlazorBlueprint.Components.Button.Button
+                    Variant="BlazorBlueprint.Components.Button.ButtonVariant.Outline"
+                    OnClick="CopyToClipboard">
+                    📋 Copier dans le presse-papier
+                </BlazorBlueprint.Components.Button.Button>
+            </BlazorBlueprint.Components.Card.CardContent>
+        </BlazorBlueprint.Components.Card.Card>
+    }
+</div>
+
+@code {
+    private AnalysisRequest _request = new();
+    private string _templateText = string.Empty;
+
+    protected override void OnInitialized()
+    {
+        _templateText = TemplateService.DefaultTemplate;
+    }
+
+    private void GeneratePrompt()
+    {
+        _request.Template = _templateText;
+        _request.GeneratedPrompt = TemplateService.Render(_templateText, _request);
+    }
+
+    private async Task SaveToHistory()
+    {
+        if (string.IsNullOrWhiteSpace(_request.Title))
+        {
+            _request.Title = $"Analyse du {DateTime.Now:dd/MM/yyyy HH:mm}";
+        }
+        _request.Template = _templateText;
+        await HistoryService.SaveAsync(_request);
+    }
+
+    private void NewAnalysis()
+    {
+        _request = new AnalysisRequest();
+        _templateText = TemplateService.DefaultTemplate;
+    }
+
+    private void ResetTemplate()
+    {
+        _templateText = TemplateService.DefaultTemplate;
+    }
+
+    [Inject] private IJSRuntime JS { get; set; } = default!;
+
+    private async Task CopyToClipboard()
+    {
+        await JS.InvokeVoidAsync("navigator.clipboard.writeText", _request.GeneratedPrompt);
+    }
+
+    public void LoadRequest(AnalysisRequest request)
+    {
+        _request = request;
+        _templateText = string.IsNullOrWhiteSpace(request.Template)
+            ? TemplateService.DefaultTemplate
+            : request.Template;
+        StateHasChanged();
+    }
+}
